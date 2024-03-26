@@ -1,12 +1,13 @@
+import mongoose, {Document} from 'mongoose';
+
 type Category = {
-  category_id: number;
+  _id: mongoose.Types.ObjectId;
   category_name: string;
 };
 
-type Species = {
-  species_id: number;
+type Species = Partial<Document> & {
   species_name: string;
-  category: number;
+  category: mongoose.Types.ObjectId;
   image: string;
 };
 
