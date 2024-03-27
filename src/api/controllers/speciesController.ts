@@ -1,6 +1,8 @@
 import {Request, Response, NextFunction} from 'express';
 import {Species} from '../../types/DBTypes';
 import {MessageResponse} from '../../types/MessageTypes';
+import speciesModel from '../models/speciesModel';
+import CustomError from '../../classes/CustomError';
 
 const speciesListGet = async (
   req: Request,
@@ -8,8 +10,8 @@ const speciesListGet = async (
   next: NextFunction
 ) => {
   try {
-    // const species = await getAllSpecies();
-    // res.json(species);
+    const species = await speciesModel.find();
+    res.json(species);
   } catch (error) {
     next(error);
   }
@@ -21,9 +23,11 @@ const speciesGet = async (
   next: NextFunction
 ) => {
   try {
-    // const id = Number(req.params.id);
-    // const category = await getSpeciesById(id);
-    // res.json(category);
+    const species = await speciesModel.findById(req.params.id);
+    if (!species) {
+      throw new CustomError('No species found', 404);
+    }
+    res.json(species);
   } catch (error) {
     next(error);
   }
@@ -31,12 +35,16 @@ const speciesGet = async (
 
 const speciesPost = async (
   req: Request<{}, {}, Omit<Species, 'species_id'>>,
-  res: Response<MessageResponse>,
+  res: Response<MessageResponse & {data: Species}>,
   next: NextFunction
 ) => {
   try {
-    // const result = await postSpecies(req.body);
-    // res.json(result);
+    const species = await speciesModel.create(req.body);
+    const response = {
+      message: 'Species added',
+      data: species,
+    };
+    res.json(response);
   } catch (error) {
     next(error);
   }
@@ -44,12 +52,23 @@ const speciesPost = async (
 
 const speciesPut = async (
   req: Request<{id: string}, {}, Omit<Species, 'species_id'>>,
-  res: Response<MessageResponse>,
+  res: Response<MessageResponse & {data: Species}>,
   next: NextFunction
 ) => {
   try {
-    // const result = await putSpecies(Number(req.params.id), req.body);
-    // res.json(result);
+    const species = await speciesModel.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      {new: true}
+    );
+    if (!species) {
+      throw new CustomError('No species found', 404);
+    }
+    const response = {
+      message: 'Species updated',
+      data: species,
+    };
+    res.json(response);
   } catch (error) {
     next(error);
   }
@@ -57,12 +76,19 @@ const speciesPut = async (
 
 const speciesDelete = async (
   req: Request<{id: string}, {}, {}>,
-  res: Response<MessageResponse>,
+  res: Response<MessageResponse & {data: Species}>,
   next: NextFunction
 ) => {
   try {
-    // const result = await deleteSpecies(Number(req.params.id));
-    // res.json(result);
+    const species = await speciesModel.findByIdAndDelete(req.params.id);
+    if (!species) {
+      throw new CustomError('No species found', 404);
+    }
+    const response = {
+      message: 'Species deleted',
+      data: species,
+    };
+    res.json(response);
   } catch (error) {
     next(error);
   }

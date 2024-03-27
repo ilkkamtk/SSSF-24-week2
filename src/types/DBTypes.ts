@@ -1,3 +1,4 @@
+import {Point} from 'geojson';
 import mongoose, {Document} from 'mongoose';
 
 type Category = {
@@ -9,13 +10,14 @@ type Species = Partial<Document> & {
   species_name: string;
   category: mongoose.Types.ObjectId;
   image: string;
+  location: Point;
 };
 
-type Animal = {
-  animal_id: number;
+type Animal = Partial<Document> & {
   animal_name: string;
-  species: number;
+  species: mongoose.Types.ObjectId;
   birthdate: Date;
+  gender: 'male' | 'female';
 };
 
 export {Category, Species, Animal};

@@ -58,7 +58,8 @@ const categoryPut = async (
   try {
     const category = await categoryModel.findByIdAndUpdate(
       req.params.id,
-      req.body
+      req.body,
+      {new: true}
     );
     if (!category) {
       throw new CustomError('No categories found', 404);
