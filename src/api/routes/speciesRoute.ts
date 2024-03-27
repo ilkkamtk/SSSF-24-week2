@@ -2,6 +2,7 @@ import express from 'express';
 import {
   speciesDelete,
   speciesGet,
+  speciesGetByBounds,
   speciesListGet,
   speciesPost,
   speciesPut,
@@ -21,6 +22,8 @@ router
     body('image').isURL(),
     speciesPost
   );
+
+router.route('/area').get(speciesGetByBounds);
 
 router
   .route('/:id')
