@@ -7,11 +7,32 @@ import {
   speciesPut,
 } from '../controllers/speciesController';
 import {imageFromWikipedia} from '../../middlewares';
+import {body, param} from 'express-validator';
 
 const router = express.Router();
 
-router.route('/').get(speciesListGet).post(imageFromWikipedia, speciesPost);
+router
+  .route('/')
+  .get(speciesListGet)
+  .post(
+    imageFromWikipedia,
+    body('species_name').isString().escape(),
+    body('category').isMongoId().notEmpty(),
+    body('image').isURL(),
+    speciesPost
+  );
 
-router.route('/:id').get(speciesGet).put(speciesPut).delete(speciesDelete);
+router
+  .route('/:id')
+  .get(param('id').isMongoId().notEmpty(), speciesGet)
+  .put(
+    imageFromWikipedia,
+    param('id').isMongoId().notEmpty(),
+    body('species_name').isString().escape(),
+    body('category').isMongoId().notEmpty(),
+    body('image').isURL(),
+    speciesPut
+  )
+  .delete(param('id').isMongoId().notEmpty(), speciesDelete);
 
 export default router;
