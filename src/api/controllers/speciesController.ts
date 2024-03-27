@@ -94,4 +94,38 @@ const speciesDelete = async (
   }
 };
 
-export {speciesListGet, speciesGet, speciesPost, speciesPut, speciesDelete};
+const speciesGetByBounds = async (
+  req: Request<{}, {}, {}, {topRight: string; bottomLeft: string}>,
+  res: Response<Species[]>,
+  next: NextFunction
+) => {
+  try {
+    // query example: /species/area?topRight=40.73061,-73.935242&bottomLeft=40.71427,-74.00597
+    // longitude first, then latitude (opposite of google maps)
+
+    const {topRight, bottomLeft} = req.query;
+    const rightCorner = topRight.split(',');
+    const leftCorner = bottomLeft.split(',');
+
+    const species = await speciesModel.find({
+      location: {
+        $geoWithin: {
+          $box: [leftCorner, rightCorner],
+        },
+      },
+    });
+
+    res.json(species);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export {
+  speciesListGet,
+  speciesGet,
+  speciesPost,
+  speciesPut,
+  speciesDelete,
+  speciesGetByBounds,
+};
