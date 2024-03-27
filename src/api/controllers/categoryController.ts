@@ -41,7 +41,7 @@ const categoryPost = async (
   try {
     const category = await categoryModel.create(req.body);
     const response = {
-      message: 'Category updated',
+      message: 'Category added',
       data: category,
     };
     res.json(response);
@@ -75,13 +75,19 @@ const categoryPut = async (
 
 const categoryDelete = async (
   req: Request<{id: string}, {}, {}>,
-  res: Response<MessageResponse>,
+  res: Response<MessageResponse & {data: Category}>,
   next: NextFunction
 ) => {
   try {
-    // const id = Number(req.params.id);
-    // const result = await deleteCategory(id);
-    // res.json(result);
+    const category = await categoryModel.findByIdAndDelete(req.params.id);
+    if (!category) {
+      throw new CustomError('No categories found', 404);
+    }
+    const response = {
+      message: 'Category deleted',
+      data: category,
+    };
+    res.json(response);
   } catch (error) {
     next(error);
   }

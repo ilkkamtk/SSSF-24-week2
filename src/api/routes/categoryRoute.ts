@@ -22,13 +22,13 @@ router
 
 router
   .route('/:id')
-  .get(param('id').isInt(), validationErrors, categoryGet)
+  .get(param('id').isMongoId(), validationErrors, categoryGet)
   .put(
-    param('id').isInt(),
+    param('id').isMongoId(),
     body('category_name').notEmpty().isString().isAlpha().escape(),
     validationErrors,
     categoryPut
   )
-  .delete(param('id').isInt(), validationErrors, categoryDelete);
+  .delete(param('id').isMongoId(), validationErrors, categoryDelete);
 
 export default router;
