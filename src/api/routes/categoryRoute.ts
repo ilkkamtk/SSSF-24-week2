@@ -15,7 +15,7 @@ router
   .route('/')
   .get(categoryListGet)
   .post(
-    body('category_name').notEmpty().isString().isAlpha().escape(),
+    body('category_name').isString().escape(),
     validationErrors,
     categoryPost
   );

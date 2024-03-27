@@ -2,6 +2,7 @@ import {Request, Response, NextFunction} from 'express';
 import {Category} from '../../types/DBTypes';
 import {MessageResponse} from '../../types/MessageTypes';
 import categoryModel from '../models/categoryModel';
+import CustomError from '../../classes/CustomError';
 
 const categoryListGet = async (
   req: Request,
@@ -9,8 +10,8 @@ const categoryListGet = async (
   next: NextFunction
 ) => {
   try {
-    // const categories = await getAllCategories();
-    // res.json(categories);
+    const categories = await categoryModel.find();
+    res.json(categories);
   } catch (error) {
     next(error);
   }
@@ -22,9 +23,11 @@ const categoryGet = async (
   next: NextFunction
 ) => {
   try {
-    // const id = Number(req.params.id);
-    // const category = await getCategoryById(id);
-    // res.json(category);
+    const category = await categoryModel.findById(req.params.id);
+    if (!category) {
+      throw new CustomError('No categories found', 404);
+    }
+    res.json(category);
   } catch (error) {
     next(error);
   }
@@ -32,12 +35,16 @@ const categoryGet = async (
 
 const categoryPost = async (
   req: Request<{}, {}, Pick<Category, 'category_name'>>,
-  res: Response<Category>,
+  res: Response<MessageResponse & {data: Category}>,
   next: NextFunction
 ) => {
   try {
-    const result = await categoryModel.create(req.body);
-    res.json(result);
+    const category = await categoryModel.create(req.body);
+    const response = {
+      message: 'Category updated',
+      data: category,
+    };
+    res.json(response);
   } catch (error) {
     next(error);
   }
@@ -45,12 +52,22 @@ const categoryPost = async (
 
 const categoryPut = async (
   req: Request<{id: string}, {}, Pick<Category, 'category_name'>>,
-  res: Response<MessageResponse>,
+  res: Response<MessageResponse & {data: Category}>,
   next: NextFunction
 ) => {
   try {
-    // const result = await putCategory(Number(req.params.id), req.body);
-    // res.json(result);
+    const category = await categoryModel.findByIdAndUpdate(
+      req.params.id,
+      req.body
+    );
+    if (!category) {
+      throw new CustomError('No categories found', 404);
+    }
+    const response = {
+      message: 'Category updated',
+      data: category,
+    };
+    res.json(response);
   } catch (error) {
     next(error);
   }
