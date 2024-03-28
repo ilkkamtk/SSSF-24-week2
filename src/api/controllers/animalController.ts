@@ -1,7 +1,8 @@
 import {Request, Response, NextFunction} from 'express';
-import {Animal} from '../../types/DBTypes';
+import {Animal, UserWithoutPassword} from '../../types/DBTypes';
 import animalModel from '../models/animalModel';
 import {MessageResponse} from '../../types/MessageTypes';
+import CustomError from '../../classes/CustomError';
 
 const animalListGet = async (
   req: Request,
@@ -44,10 +45,14 @@ const animalGet = async (
 
 const animalPost = async (
   req: Request<{}, {}, Omit<Animal, 'animal_id'>>,
-  res: Response<MessageResponse & {data: Animal}>,
+  res: Response<MessageResponse & {data: Animal}, {user: UserWithoutPassword}>,
   next: NextFunction
 ) => {
   try {
+    if (!res.locals.user) {
+      throw new CustomError('Not authorized', 401);
+    }
+    req.body.owner = res.locals.user._id;
     const animal = await animalModel.create(req.body);
     const response = {
       message: 'Animal added',
@@ -85,11 +90,19 @@ const animalPut = async (
 
 const animalDelete = async (
   req: Request<{id: string}, {}, {}>,
-  res: Response<MessageResponse & {data: Animal}>,
+  res: Response<MessageResponse & {data: Animal}, {user: UserWithoutPassword}>,
   next: NextFunction
 ) => {
   try {
-    const animal = await animalModel.findByIdAndDelete(req.params.id);
+    if (!res.locals.user) {
+      throw new CustomError('Not authorized', 401);
+    }
+
+    const animal = await animalModel.findOneAndDelete({
+      _id: req.params.id,
+      owner: res.locals.user._id,
+    });
+
     if (!animal) {
       throw new Error('No animals found');
     }
