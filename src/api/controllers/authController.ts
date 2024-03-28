@@ -18,7 +18,9 @@ const login = async (
       throw new CustomError('Username or password incorrect', 404);
     }
 
-    if (bcrypt.hashSync(password, user.password)) {
+    console.log(user);
+
+    if (!bcrypt.hashSync(password, user.password)) {
       throw new CustomError('Username or password incorrect', 404);
     }
 
