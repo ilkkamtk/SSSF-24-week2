@@ -18,8 +18,6 @@ const login = async (
       throw new CustomError('Username or password incorrect', 404);
     }
 
-    console.log(user);
-
     if (!bcrypt.hashSync(password, user.password)) {
       throw new CustomError('Username or password incorrect', 404);
     }
@@ -28,11 +26,22 @@ const login = async (
       throw new CustomError('JWT secret not set', 500);
     }
 
-    const tokenContent = user;
+    const userWithoutPassword = {
+      _id: user._id,
+      email: user.email,
+      user_name: user.user_name,
+    };
+
+    const tokenContent = {
+      _id: user._id,
+      email: user.email,
+      user_name: user.user_name,
+      role: user.role,
+    };
 
     const token = jwt.sign(tokenContent, process.env.JWT_SECRET);
 
-    res.json({message: 'Login successful', token, user});
+    res.json({message: 'Login successful', token, userWithoutPassword});
   } catch (error) {
     next(error);
   }
