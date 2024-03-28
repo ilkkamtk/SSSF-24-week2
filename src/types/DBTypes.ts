@@ -20,4 +20,11 @@ type Animal = Partial<Document> & {
   gender: 'male' | 'female';
 };
 
-export {Category, Species, Animal};
+type User = Partial<Document> & {
+  user_name: string;
+  email: string;
+  password: string;
+  role: 'user' | 'admin';
+};
+
+export {Category, Species, Animal, User};
