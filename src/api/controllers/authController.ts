@@ -1,6 +1,5 @@
 import {Request, Response, NextFunction} from 'express';
 import {
-  User,
   UserWithoutPassword,
   UserWithoutPasswordRole,
 } from '../../types/DBTypes';
