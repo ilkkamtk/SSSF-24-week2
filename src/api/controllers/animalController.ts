@@ -98,10 +98,16 @@ const animalDelete = async (
       throw new CustomError('Not authorized', 401);
     }
 
-    const animal = await animalModel.findOneAndDelete({
+    const params = {
       _id: req.params.id,
       owner: res.locals.user._id,
-    });
+    };
+
+    if (res.locals.user.role === 'admin') {
+      delete params.owner;
+    }
+
+    const animal = await animalModel.findOneAndDelete(params);
 
     if (!animal) {
       throw new Error('No animals found');
