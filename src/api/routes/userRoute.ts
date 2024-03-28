@@ -27,9 +27,9 @@ router
   .get(param('id').isMongoId(), validationErrors, userGet)
   .put(
     param('id').isMongoId(),
-    body('user_name').isString().escape(),
-    body('email').isEmail().normalizeEmail(),
-    body('password').escape(),
+    body('user_name').isString().escape().optional(),
+    body('email').isEmail().normalizeEmail().optional(),
+    body('password').escape().optional(),
     validationErrors,
     userPut
   )

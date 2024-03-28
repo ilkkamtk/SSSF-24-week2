@@ -31,9 +31,9 @@ router
   .put(
     imageFromWikipedia,
     param('id').isMongoId().notEmpty(),
-    body('species_name').isString().escape(),
-    body('category').isMongoId().notEmpty(),
-    body('image').isURL(),
+    body('species_name').isString().escape().optional(),
+    body('category').isMongoId().notEmpty().optional(),
+    body('image').isURL().optional(),
     speciesPut
   )
   .delete(param('id').isMongoId().notEmpty(), speciesDelete);

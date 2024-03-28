@@ -39,6 +39,7 @@ const userPost = async (
   next: NextFunction
 ) => {
   try {
+    req.body.role = 'user';
     const user = await userModel.create(req.body);
     const response = {
       message: 'User added',
