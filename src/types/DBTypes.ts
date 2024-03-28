@@ -29,7 +29,7 @@ type User = Partial<Document> & {
 
 type UserWithoutPassword = Omit<User, 'password'>;
 
-type UserWithoutPasswordToken = Omit<UserWithoutPassword, 'role'>;
+type UserWithoutPasswordRole = Omit<UserWithoutPassword, 'role'>;
 
 export {
   Category,
@@ -37,5 +37,5 @@ export {
   Animal,
   User,
   UserWithoutPassword,
-  UserWithoutPasswordToken,
+  UserWithoutPasswordRole,
 };

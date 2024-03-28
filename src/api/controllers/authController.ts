@@ -1,5 +1,5 @@
 import {Request, Response, NextFunction} from 'express';
-import {User} from '../../types/DBTypes';
+import {User, UserWithoutPasswordRole} from '../../types/DBTypes';
 import {MessageResponse} from '../../types/MessageTypes';
 import userModel from '../models/userModel';
 import CustomError from '../../classes/CustomError';
@@ -8,7 +8,9 @@ import jwt from 'jsonwebtoken';
 
 const login = async (
   req: Request<{}, {}, {username: string; password: string}>,
-  res: Response<MessageResponse & {token: string; user: User}>,
+  res: Response<
+    MessageResponse & {token: string; user: UserWithoutPasswordRole}
+  >,
   next: NextFunction
 ) => {
   try {
