@@ -10,7 +10,10 @@ const speciesListGet = async (
   next: NextFunction
 ) => {
   try {
-    const species = await speciesModel.find();
+    const species = await speciesModel
+      .find()
+      .select('-__v')
+      .populate('category', '-__v');
     res.json(species);
   } catch (error) {
     next(error);
@@ -23,7 +26,10 @@ const speciesGet = async (
   next: NextFunction
 ) => {
   try {
-    const species = await speciesModel.findById(req.params.id);
+    const species = await speciesModel
+      .findById(req.params.id)
+      .select('-__v')
+      .populate('category', '-__v');
     if (!species) {
       throw new CustomError('No species found', 404);
     }

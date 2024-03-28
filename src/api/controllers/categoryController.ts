@@ -1,5 +1,5 @@
 import {Request, Response, NextFunction} from 'express';
-import {Category} from '../../types/DBTypes';
+import {Category, UserWithoutPassword} from '../../types/DBTypes';
 import {MessageResponse} from '../../types/MessageTypes';
 import categoryModel from '../models/categoryModel';
 import CustomError from '../../classes/CustomError';
@@ -76,10 +76,16 @@ const categoryPut = async (
 
 const categoryDelete = async (
   req: Request<{id: string}, {}, {}>,
-  res: Response<MessageResponse & {data: Category}>,
+  res: Response<
+    MessageResponse & {data: Category},
+    {user: UserWithoutPassword}
+  >,
   next: NextFunction
 ) => {
   try {
+    if (res.locals.user.role !== 'admin') {
+      throw new CustomError('Not authorized', 401);
+    }
     const category = await categoryModel.findByIdAndDelete(req.params.id);
     if (!category) {
       throw new CustomError('No categories found', 404);

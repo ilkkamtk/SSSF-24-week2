@@ -11,7 +11,7 @@ const userListGet = async (
   next: NextFunction
 ) => {
   try {
-    const users = await userModel.find();
+    const users = await userModel.find().select('-password -__v -role');
     res.json(users);
   } catch (error) {
     next(error);
@@ -24,7 +24,9 @@ const userGet = async (
   next: NextFunction
 ) => {
   try {
-    const user = await userModel.findById(req.params.id);
+    const user = await userModel
+      .findById(req.params.id)
+      .select('-password -__v -role');
     if (!user) {
       throw new CustomError('No species found', 404);
     }
@@ -59,9 +61,11 @@ const userPut = async (
   next: NextFunction
 ) => {
   try {
-    const user = await userModel.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-    });
+    const user = await userModel
+      .findByIdAndUpdate(req.params.id, req.body, {
+        new: true,
+      })
+      .select('-password -__v -role');
     if (!user) {
       throw new CustomError('No user found', 404);
     }
@@ -81,7 +85,9 @@ const userDelete = async (
   next: NextFunction
 ) => {
   try {
-    const user = await userModel.findByIdAndDelete(req.params.id);
+    const user = await userModel
+      .findByIdAndDelete(req.params.id)
+      .select('-password -__v -role');
     if (!user) {
       throw new CustomError('No user found', 404);
     }
