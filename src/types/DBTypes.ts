@@ -18,6 +18,7 @@ type Animal = Partial<Document> & {
   species: mongoose.Types.ObjectId;
   birthdate: Date;
   gender: 'male' | 'female';
+  owner: mongoose.Types.ObjectId;
 };
 
 type User = Partial<Document> & {

@@ -22,6 +22,11 @@ const animalSchema = new mongoose.Schema<Animal>({
     enum: ['male', 'female'],
     required: true,
   },
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: [true, 'Owner is required.'],
+  },
 });
 
 export default mongoose.model<Animal>('Animal', animalSchema);
