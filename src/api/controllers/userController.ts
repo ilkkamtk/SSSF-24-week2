@@ -3,6 +3,7 @@ import {User} from '../../types/DBTypes';
 import {MessageResponse} from '../../types/MessageTypes';
 import userModel from '../models/userModel';
 import CustomError from '../../classes/CustomError';
+import bcrypt from 'bcrypt';
 
 const userListGet = async (
   req: Request,
@@ -40,6 +41,7 @@ const userPost = async (
 ) => {
   try {
     req.body.role = 'user';
+    req.body.password = bcrypt.hashSync(req.body.password, 10);
     const user = await userModel.create(req.body);
     const response = {
       message: 'User added',
